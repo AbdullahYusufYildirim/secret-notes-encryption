@@ -43,7 +43,8 @@ title_label.place(x = 147 , y = 115 ,)
 """
 Title Entry
 """
-title_entry = tkinter.Entry(relief="flat",borderwidth=0,bg = "white",fg = "black",highlightbackground = "light grey",insertbackground="blue",highlightthickness=0)
+title_entry = tkinter.Entry(relief="flat",borderwidth=0,bg = "white",fg = "black",highlightbackground = "light grey"
+                            ,insertbackground="blue",highlightthickness=0)
 title_entry.place(width = 300 ,x = 53 ,y = 150)
 
 """
@@ -73,7 +74,7 @@ master_key_label.place(x = 145 , y = 540)
 """
 Master Key Entry
 """
-master_key_entry = tkinter.Entry(relief="flat",borderwidth=0,fg = "black", bg = "white",highlightbackground = "light grey",insertontime=100,
+master_key_entry = tkinter.Entry(relief="flat",borderwidth=0,fg = "black", bg = "white",highlightbackground = "light grey",
                                  insertbackground="blue",highlightthickness=0)
 master_key_entry.place(width = 300 ,x = 58,y = 570)
 """
@@ -85,19 +86,24 @@ def encrypt_and_save(): #içine paswordu yaz fonksiyonu çalıştırmak için
     key = base64.urlsafe_b64encode(hashed)
     f = Fernet(key)
     token = f.encrypt(secret.encode())
-    title_entry.delete("1.0","end")
-    secret_text.delete("1.0","end-1c")
-    master_key_entry.delete("1.0","end")
-
-
-
-
-
+    title_entry.delete(0,"end")
+    secret_text.delete("1.0", "end")
+    master_key_entry.delete(0,"end")
     with open("noten.txt", mode="a", encoding="utf-8") as my_note_content:
         my_note_content.write(f"{title_entry.get()} : \n")
         my_note_content.write(f"{token}\n\n")
 
+def decrypt_and_show():
+    user_password = master_key_entry.get()
+    user_hashed = hashlib.sha256(user_password.encode()).digest()
+    key2 = base64.urlsafe_b64encode(user_hashed)
+    f2 = Fernet(key2)
+    token_str = secret_text.get("1.0", "end-1c")
+    token_bytes = token_str.encode()
+    decrypted_bytes = f2.decrypt(token_bytes) # 🔓 ASIL ÇÖZME
+    decrypted_text = decrypted_bytes.decode() # bytes → str
 
+    secret_text.insert("1.0",decrypted_text)
 
 
 
@@ -113,7 +119,8 @@ save_and_encrypt_button.place(x = 140 , y = 605)
 Decrypt Button 
 """
 decrypt_button = tkinter.Button(text = "Decrypt", fg = "black", bg = "light grey",font = ("Arial,10")
-                                ,relief="flat",borderwidth=0 ,overrelief="ridge",width = 8,highlightbackground = "light grey")
+                                ,relief="flat",borderwidth=0 ,overrelief="ridge",width = 8,highlightbackground = "light grey"
+                                ,command = decrypt_and_show)
 decrypt_button.place(x = 162 , y = 640)
 
 
