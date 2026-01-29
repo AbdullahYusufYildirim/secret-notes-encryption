@@ -86,12 +86,12 @@ def encrypt_and_save(): #içine paswordu yaz fonksiyonu çalıştırmak için
     key = base64.urlsafe_b64encode(hashed)
     f = Fernet(key)
     token = f.encrypt(secret.encode())
-    title_entry.delete(0,"end")
-    secret_text.delete("1.0", "end")
-    master_key_entry.delete(0,"end")
     with open("noten.txt", mode="a", encoding="utf-8") as my_note_content:
         my_note_content.write(f"{title_entry.get()} : \n")
-        my_note_content.write(f"{token}\n\n")
+        my_note_content.write(token.decode() + "\n\n")
+    title_entry.delete(0, "end")
+    secret_text.delete("1.0", "end")
+    master_key_entry.delete(0, "end")
 
 def decrypt_and_show():
     user_password = master_key_entry.get()
@@ -102,7 +102,7 @@ def decrypt_and_show():
     token_bytes = token_str.encode()
     decrypted_bytes = f2.decrypt(token_bytes) # 🔓 ASIL ÇÖZME
     decrypted_text = decrypted_bytes.decode() # bytes → str
-
+    secret_text.delete("1.0", "end")
     secret_text.insert("1.0",decrypted_text)
 
 
