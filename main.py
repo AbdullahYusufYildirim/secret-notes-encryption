@@ -2,6 +2,9 @@ import tkinter
 import base64
 from cryptography.fernet import Fernet
 import hashlib
+from tkinter import messagebox
+import os
+
 
 
 global_logo = None
@@ -78,8 +81,17 @@ master_key_entry = tkinter.Entry(relief="flat",borderwidth=0,fg = "black", bg = 
                                  insertbackground="blue",highlightthickness=0)
 master_key_entry.place(width = 300 ,x = 58,y = 570)
 """
+message_box
+"""
+
+"""
 """
 def encrypt_and_save(): #içine paswordu yaz fonksiyonu çalıştırmak için
+    if title_entry.get() == "" or secret_text.get("1.0", "end-1c") == "" or master_key_entry.get() == "":
+        messagebox.showerror(title="error", icon="error",
+                             message="Please fill in all fields: \n title, secret note, and master key")
+        return
+
     secret = secret_text.get("1.0", "end-1c")  # Gizli not
     pasword = master_key_entry.get()  # Parola
     hashed = hashlib.sha256(pasword.encode()).digest()  # yazılan paswordu 32 byts a çevir
@@ -94,16 +106,25 @@ def encrypt_and_save(): #içine paswordu yaz fonksiyonu çalıştırmak için
     master_key_entry.delete(0, "end")
 
 def decrypt_and_show():
+    if secret_text.get("1.0", "end-1c") == "" or master_key_entry.get() == "":
+        messagebox.showerror(title = "error",icon = "error" , message = "Please fill in all fields: \n secret note, and master key")
+        return
     user_password = master_key_entry.get()
     user_hashed = hashlib.sha256(user_password.encode()).digest()
     key2 = base64.urlsafe_b64encode(user_hashed)
     f2 = Fernet(key2)
     token_str = secret_text.get("1.0", "end-1c")
     token_bytes = token_str.encode()
-    decrypted_bytes = f2.decrypt(token_bytes) # 🔓 ASIL ÇÖZME
-    decrypted_text = decrypted_bytes.decode() # bytes → str
+    try :
+        decrypted_bytes = f2.decrypt(token_bytes) # 🔓 ASIL ÇÖZME
+        result = decrypted_bytes.decode() # bytes → str
+
+    except :
+        fake_bytes = os.urandom(len(token_str)// 2)
+        result = fake_bytes.hex()
+
     secret_text.delete("1.0", "end")
-    secret_text.insert("1.0",decrypted_text)
+    secret_text.insert("1.0",result)
 
 
 
