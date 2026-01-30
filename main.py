@@ -75,7 +75,7 @@ note_app_interface.title("Secret Notes")
 note_app_interface.minsize(width=425, height=750)
 note_app_interface.config(bg="light grey")
 
-global_logo = tkinter.PhotoImage(file="kaka.png")
+global_logo = tkinter.PhotoImage(file="logo.png")
 note_app_interface.iconphoto(True, global_logo)
 
 logo_image = tkinter.Label(image=global_logo, bg="light grey")
